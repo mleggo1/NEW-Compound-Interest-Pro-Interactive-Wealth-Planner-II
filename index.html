@@ -1,45 +1,489 @@
 <!doctype html>
+<!--
+README — How to publish to GitHub Pages (root)
+1) Create a new repo, add this single file named exactly `index.html` to the repo root, commit & push to `main`.
+2) GitHub → Settings → Pages → “Deploy from a branch” → Branch: main, Folder: /(root) → Save.
+3) Wait for the green check, then open your Pages URL (e.g., https://<user>.github.io/<repo>/).
+
+This file is self-contained (React 18 + Recharts UMD + Babel). No build tools required. Works in Edge/Chrome.
+-->
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Compound Interest Pro – The Ultimate Target</title>
+
+  <!-- Compact CSS (hex colors only) -->
   <style>
-    :root{--bg:#0b1220;--text:#e6eefc;--muted:#9fb0d1;--card:#121a2b;--border:#233054;--chip:#18223a;--axis:#9fb0d1;--grid:#233054;--accent:#60a5fa;--primary:#2dd4bf;--gold:#eab308;--delay:#f97316;--danger:#ef4444;--success:#059669;}
-    body.light{--bg:#f7fafc;--text:#0f172a;--muted:#475569;--card:#ffffff;--border:#dbe2ef;--chip:#f1f5f9;--axis:#475569;--grid:#e5e7eb;--accent:#2563eb;--primary:#059669;--gold:#eab308;--delay:#f97316;--danger:#dc2626;--success:#059669;}
-    *{box-sizing:border-box}html,body{height:100%}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
-    .container{max-width:1200px;margin:0 auto;padding:16px 20px}.header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}.header h1{margin:0;font-size:22px;font-weight:800}.header p{margin:0;color:var(--muted);font-size:13px}
-    .btn{cursor:pointer;border-radius:12px;padding:8px 12px;border:1px solid var(--border);background:var(--card);color:var(--text)}.btn-primary{background:var(--primary);border-color:var(--primary);color:#fff;font-weight:700;border:none}
-    .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-top:12px}
-    .grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-    label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px}input[type="text"],input[type="number"],select{width:100%;border-radius:12px;border:1px solid var(--border);padding:10px 12px;background:var(--bg);color:var(--text)}
-    input[type="range"]{width:100%;accent-color:var(--accent)}.range-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}.chips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
-    .chip{background:var(--chip);border:1px solid var(--border);border-radius:14px;padding:10px 12px;font-weight:700}.small{color:var(--muted);font-size:12px}.legend-dots{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0}.dot{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px}.center{display:flex;align-items:center;gap:8px}
-    @media (max-width:920px){.grid-3{grid-template-columns:1fr}.grid-2{grid-template-columns:1fr}.chips{grid-template-columns:1fr}}@media print{.btn{display:none!important}.card{break-inside:avoid-page}}
+    :root{
+      --bg:#0b1220; --text:#e6eefc; --muted:#9fb0d1; --card:#121a2b; --border:#233054; --chip:#18223a;
+      --axis:#9fb0d1; --grid:#233054; --accent:#60a5fa; --primary:#2dd4bf; --gold:#eab308; --delay:#f97316;
+      --danger:#ef4444; --success:#059669;
+    }
+    body.light{
+      --bg:#f7fafc; --text:#0f172a; --muted:#475569; --card:#ffffff; --border:#dbe2ef; --chip:#f1f5f9;
+      --axis:#475569; --grid:#e5e7eb; --accent:#2563eb; --primary:#059669; --gold:#eab308; --delay:#f97316;
+      --danger:#dc2626; --success:#059669;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+    .container{max-width:1200px;margin:0 auto;padding:16px 20px}
+    .header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+    .header h1{margin:0;font-size:22px;font-weight:800}
+    .header p{margin:0;color:var(--muted);font-size:13px}
+    .btn{cursor:pointer;border-radius:12px;padding:8px 12px;border:1px solid var(--border);background:var(--card);color:var(--text)}
+    .btn-primary{background:var(--primary);border-color:var(--primary);color:#fff;font-weight:700;border:none}
+    .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-top:12px}
+    .grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+    .grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+    label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px}
+    input[type="text"],input[type="number"],select{
+      width:100%;border-radius:12px;border:1px solid var(--border);padding:10px 12px;background:var(--bg);color:var(--text)
+    }
+    input[type="range"]{width:100%;accent-color:var(--accent)}
+    .range-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+    .chips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+    .chip{background:var(--chip);border:1px solid var(--border);border-radius:14px;padding:10px 12px;font-weight:700}
+    .small{color:var(--muted);font-size:12px}
+    .legend-dots{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0}
+    .dot{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px}
+    .center{display:flex;align-items:center;gap:8px}
+    @media (max-width:920px){ .grid-3{grid-template-columns:1fr} .grid-2{grid-template-columns:1fr} .chips{grid-template-columns:1fr} }
+    @media print{ .btn{display:none!important} .card{break-inside:avoid-page} }
   </style>
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/recharts@2.13.2/umd/Recharts.min.js"></script>
-  <script src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-  <script src="https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+  <!-- React + ReactDOM (UMD) -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <!-- Recharts (UMD) -->
+  <script src="https://unpkg.com/recharts@2.13.2/umd/Recharts.min.js" crossorigin></script>
+  <!-- html2canvas + jsPDF (UMD) -->
+  <script src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js" crossorigin></script>
+  <script src="https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js" crossorigin></script>
+  <!-- Babel (for in-browser JSX) -->
   <script src="https://unpkg.com/@babel/standalone@7.25.7/babel.min.js"></script>
 </head>
 <body>
   <div id="root"></div>
+
   <script type="text/babel" data-presets="env,react">
-    const {useState,useMemo,useEffect,useRef} = React;
-    const {ResponsiveContainer,ComposedChart,Line,CartesianGrid,XAxis,YAxis,Tooltip,Legend,ReferenceLine} = Recharts;
-    const clamp=(v,min,max)=>Math.min(Math.max(Number(v)||0,min),max);
-    const nz=(n,fb=0)=>Number.isFinite(n)?n:fb;
-    const fmtAUD=(n)=>"A$"+nz(n,0).toLocaleString("en-AU",{maximumFractionDigits:0,minimumFractionDigits:0});
-    const parseMoney=(s)=>{const t=String(s||"").replace(/[^0-9]/g,"");return t?Number(t):0;};
-    const fmtYAxis=(v)=>{const n=Math.round(Number(v)||0);if(Math.abs(n)>=1_000_000)return(n/1_000_000).toFixed(1)+"m";if(Math.abs(n)>=1_000)return Math.round(n/1_000)+"k";return String(n);};
-    function MoneyInput({id,label,value,onChange}){const [text,setText]=useState((value||0).toLocaleString("en-AU"));useEffect(()=>{setText((value||0).toLocaleString("en-AU"));},[value]);const commit=()=>{const v=parseMoney(text);onChange(v);setText(v.toLocaleString("en-AU"));};return(<div><label htmlFor={id}>{label}</label><input id={id} type="text" inputMode="numeric" value={text} onChange={e=>setText(e.target.value)} onFocus={e=>e.target.value=String(value||0)} onBlur={commit} onKeyDown={e=>{if(e.key==="Enter"){commit();e.currentTarget.blur();}}}/></div>);}
-    function RangePair({id,label,value,onChange,min,max,step=1,money=false}){const [text,setText]=useState(String(value));useEffect(()=>setText(String(value)),[value]);const commit=()=>{const raw=money?parseMoney(text):Number(text);const cl=clamp(raw,min,max);onChange(cl);setText(String(cl));};return(<div><label htmlFor={id}>{label}</label><div className="range-row"><input id={id} type="range" min={min} max={max} step={step} value={value} onChange={e=>onChange(clamp(Number(e.target.value),min,max))}/><input type={money?"text":"number"} inputMode={money?"numeric":undefined} value={money?("$"+(value||0).toLocaleString("en-AU")):String(value)} onFocus={e=>money&&(e.target.value=String(value))} onChange={e=>setText(e.target.value)} onBlur={commit} onKeyDown={e=>{if(e.key==="Enter"){commit();e.currentTarget.blur();}}}/></div></div>);}
-    function project({currentAge,retirementAge,lifeExpectancy,initialAmount,monthlyContribution,preRealReturn,postRealReturn,inflation,annualSpendToday,delayYears,}){const horizonYears=Math.max(1,lifeExpectancy-currentAge);const months=Math.round(horizonYears*12);const monthsToRet=Math.max(0,Math.round((retirementAge-currentAge)*12));const monthsDelay=Math.max(0,Math.round(delayYears*12));const preNom=(1+preRealReturn)*(1+inflation)-1;const mPre=Math.pow(1+preNom,1/12)-1;const postNom=(1+postRealReturn)*(1+inflation)-1;const mPost=Math.pow(1+postNom,1/12)-1;const mInfl=Math.pow(1+inflation,1/12)-1;const rows=[];let bal=Math.max(0,initialAmount);let depletedAge=null;for(let m=1;m<=months;m++){const age=currentAge+m/12;const pre=m<=monthsToRet;const rate=pre?mPre:mPost;const contrib=pre&&m>monthsDelay?monthlyContribution:0;const monthsSinceRet=Math.max(0,m-monthsToRet);const spend=monthsSinceRet>0?(annualSpendToday/12)*Math.pow(1+mInfl,monthsSinceRet):0;const prev=bal;const growth=prev*rate;bal=prev+growth+contrib-spend;if(bal<=0&&!depletedAge)depletedAge=age;if(bal<0)bal=0;if(m%12===0){const deflator=Math.pow(1+mInfl,m);rows.push({age:Math.floor(age),nominal:bal,real:bal/deflator,cumulativeContributions:0,cumulativeReturns:0});}}if(!rows.length)rows.push({age:Math.floor(currentAge),nominal:bal,real:bal,cumulativeContributions:0,cumulativeReturns:0});const endNom=rows[rows.length-1].nominal;const endReal=rows[rows.length-1].real;const atRet=rows.find(r=>r.age===retirementAge)||rows.find(r=>r.age>retirementAge)||rows[rows.length-1];const pvRealAtRet=atRet?atRet.real:endReal;const r=postRealReturn;const n=Math.max(1,lifeExpectancy-retirementAge);let sustainableRealSpend=0;if(r<=0){sustainableRealSpend=pvRealAtRet/n;}else{sustainableRealSpend=pvRealAtRet*(r/(1-Math.pow(1+r,-n)));}return{rows,endNom,endReal,atRetNom:atRet.nominal,atRetReal:pvRealAtRet,depletedAge:depletedAge?Math.floor(depletedAge):null,sustainableRealSpend};}
-    function merge(baseRows,delayedRows){const map=new Map();baseRows.forEach(r=>map.set(r.age,{...r}));delayedRows.forEach(r=>{const prev=map.get(r.age)||{age:r.age};map.set(r.age,{...prev,delayedNominal:r.nominal});});return Array.from(map.values()).sort((a,b)=>a.age-b.age);}
-    function App(){const THEME_KEY="cip_theme";const LS_KEY="cip_state_v2";const [dark,setDark]=useState(()=> (localStorage.getItem(THEME_KEY)??"dark")!=="light");useEffect(()=>{document.body.classList.toggle("light",!dark);localStorage.setItem(THEME_KEY,dark?"dark":"light");},[dark]);const [name,setName]=useState("");const [location,setLocation]=useState("");const [occupation,setOccupation]=useState("");const [currentAge,setCurrentAge]=useState(40);const [retirementAge,setRetirementAge]=useState(60);const [lifeExpectancy,setLifeExpectancy]=useState(90);const [initialAmount,setInitialAmount]=useState(900000);const [monthlyContribution,setMonthlyContribution]=useState(3000);const [preRealReturn,setPreRealReturn]=useState(0.08);const [postRealReturn,setPostRealReturn]=useState(0.025);const [inflation,setInflation]=useState(0.03);const [annualSpendToday,setAnnualSpendToday]=useState(60000);const [delayYears,setDelayYears]=useState(0);useEffect(()=>{try{const raw=localStorage.getItem(LS_KEY);if(!raw)return;const s=JSON.parse(raw);setName(s.name??"");setLocation(s.location??"");setOccupation(s.occupation??"");setCurrentAge(s.currentAge??40);setRetirementAge(s.retirementAge??60);setLifeExpectancy(s.lifeExpectancy??90);setInitialAmount(s.initialAmount??900000);setMonthlyContribution(s.monthlyContribution??3000);setPreRealReturn(s.preRealReturn??0.08);setPostRealReturn(s.postRealReturn??0.025);setInflation(s.inflation??0.03);setAnnualSpendToday(s.annualSpendToday??60000);setDelayYears(s.delayYears??0);}catch{}},[]);useEffect(()=>{const s={name,location,occupation,currentAge,retirementAge,lifeExpectancy,initialAmount,monthlyContribution,preRealReturn,postRealReturn,inflation,annualSpendToday,delayYears};try{localStorage.setItem(LS_KEY,JSON.stringify(s));}catch{}},[name,location,occupation,currentAge,retirementAge,lifeExpectancy,initialAmount,monthlyContribution,preRealReturn,postRealReturn,inflation,annualSpendToday,delayYears]);const base=useMemo(()=>project({currentAge,retirementAge,lifeExpectancy,initialAmount,monthlyContribution,preRealReturn,postRealReturn,inflation,annualSpendToday,delayYears:0,}),[currentAge,retirementAge,lifeExpectancy,initialAmount,monthlyContribution,preRealReturn,postRealReturn,inflation,annualSpendToday]);const delayed=useMemo(()=>project({currentAge,retirementAge,lifeExpectancy,initialAmount,monthlyContribution,preRealReturn,postRealReturn,inflation,annualSpendToday,delayYears,}),[currentAge,retirementAge,lifeExpectancy,initialAmount,monthlyContribution,preRealReturn,postRealReturn,inflation,annualSpendToday,delayYears]);const data=useMemo(()=>merge(base.rows,delayed.rows),[base.rows,delayed.rows]);const costOfDelay=Math.max(0,base.endNom-delayed.endNom);const yearsToRet=Math.max(0,retirementAge-currentAge);const reportRef=useRef(null);const downloadPNG=async()=>{const node=reportRef.current;if(!node)return;const canvas=await html2canvas(node,{scale:2,backgroundColor:"#ffffff"});const link=document.createElement("a");link.download="Compound_Interest_Pro.png";link.href=canvas.toDataURL("image/png");link.click();};const downloadPDF=async()=>{const node=reportRef.current;if(!node)return;const canvas=await html2canvas(node,{scale:2,backgroundColor:"#ffffff"});const img=canvas.toDataURL("image/png");const {jsPDF}=window.jspdf;const pdf=new jsPDF("p","mm","a4");const pageW=pdf.internal.pageSize.getWidth();const pageH=pdf.internal.pageSize.getHeight();const margin=8;const pxPerMM=96/25.4;const imgWmm=canvas.width/pxPerMM;const imgHmm=canvas.height/pxPerMM;const renderW=pageW-margin*2;const scale=renderW/imgWmm;const renderH=imgHmm*scale;let remainingH=renderH;let pageIndex=0;while(remainingH>0){const offsetY=margin-pageIndex*pageH;pdf.addImage(img,"PNG",margin,offsetY,renderW,renderH,undefined,"FAST");remainingH-=pageH;pageIndex++;if(remainingH>0)pdf.addPage();}pdf.save("Compound_Interest_Pro.pdf");};return(<div className="container"><div ref={reportRef}><header className="header"><div><h1>Compound Interest Pro – The Ultimate Target</h1><p>Interactive wealth projection with nominal vs real balances, delayed start, spending, and a clear retirement line.</p></div><div className="row"><button className="btn" onClick={()=>setDark(d=>!d)} aria-pressed={true} title="Night/Day">Toggle Theme</button><button className="btn" onClick={downloadPNG} title="Download PNG">PNG</button><button className="btn btn-primary" onClick={downloadPDF} title="Download PDF">PDF</button></div></header><section className="card" aria-labelledby="prof"><h2 id="prof" style={{marginTop:0}}>Quick Profile</h2><div className="grid-3"><div><label htmlFor="name">Name</label><input id="name" value={name} onChange={e=>setName(e.target.value)} placeholder="e.g., Michael Leggo"/></div><div><label htmlFor="loc">Location</label><input id="loc" value={location} onChange={e=>setLocation(e.target.value)} placeholder="City, Country"/></div><div><label htmlFor="occ">Occupation</label><input id="occ" value={occupation} onChange={e=>setOccupation(e.target.value)} placeholder="e.g., Project Manager"/></div></div></section><section className="card" aria-labelledby="controls"><h2 id="controls" style={{marginTop:0}}>Controls</h2><div className="grid-2"><RangePair id="ageNow" label="Current Age" value={currentAge} onChange={v=>setCurrentAge(Math.min(Math.max(v,18),retirementAge-1))} min={18} max={Math.max(19,retirementAge-1)} step={1}/><RangePair id="retAge" label="Retirement Age" value={retirementAge} onChange={v=>setRetirementAge(Math.min(Math.max(v,currentAge+1),100))} min={currentAge+1} max={100} step={1}/><RangePair id="lifeExp" label="Life Expectancy (age)" value={lifeExpectancy} onChange={v=>setLifeExpectancy(Math.min(Math.max(v,retirementAge+1),110))} min={retirementAge+1} max={110} step={1}/><RangePair id="initial" label="Initial Amount" value={initialAmount} onChange={v=>setInitialAmount(Math.min(Math.max(v,0),5_000_000))} min={0} max={5_000_000} step={5000} money/><RangePair id="monthly" label="Monthly Contribution" value={monthlyContribution} onChange={v=>setMonthlyContribution(Math.min(Math.max(v,0),25_000))} min={0} max={25_000} step={100} money/><RangePair id="preReal" label="Expected Real Return (% p.a., pre-retirement)" value={+(preRealReturn*100).toFixed(1)} onChange={v=>setPreRealReturn(Math.min(Math.max(v,0),20)/100)} min={0} max={20} step={0.1}/><RangePair id="postReal" label="Retirement Real Return (% p.a.)" value={+(postRealReturn*100).toFixed(1)} onChange={v=>setPostRealReturn(Math.min(Math.max(v,-5),10)/100)} min={-5} max={10} step={0.1}/><RangePair id="infl" label="Inflation (% p.a.)" value={+(inflation*100).toFixed(1)} onChange={v=>setInflation(Math.min(Math.max(v,0),10)/100)} min={0} max={10} step={0.1}/><RangePair id="spend" label="Annual Spend (today $)" value={annualSpendToday} onChange={v=>setAnnualSpendToday(Math.min(Math.max(v,0),500_000))} min={0} max={500_000} step={1000} money/><RangePair id="delay" label="Start Delay (years)" value={delayYears} onChange={v=>setDelayYears(Math.min(Math.max(v,0),10))} min={0} max={10} step={1}/></div><p className="small" style={{marginTop:8}}>Contributions stop at retirement; spending starts at retirement and is indexed with inflation. Real balance is inflation-adjusted.</p></section><section className="card" aria-labelledby="proj"><div className="center" style={{justifyContent:"space-between"}}><h2 id="proj" style={{margin:0}}>Projection</h2><div className="legend-dots"><span><span className="dot" style={{background:"#2563eb"}}></span>Nominal</span><span><span className="dot" style={{background:"#10b981"}}></span>Real</span><span><span className="dot" style={{background:"#f97316"}}></span>Delayed</span></div></div><div style="width:100%;height:520px"><ResponsiveContainer><ComposedChart data={data} margin={{top:60,right:32,left:20,bottom:34}}><CartesianGrid stroke={"var(--grid)"} strokeDasharray="3 3"/><XAxis dataKey="age" tickFormatter={t=>`${t}`} tick={{fill:"var(--axis)"}}/><YAxis tickFormatter={fmtYAxis} tick={{fill:"var(--axis)"}}/><Tooltip formatter={(val,name)=>[fmtAUD(val),name]} labelFormatter={l=>`Age ${l}`} contentStyle={{backgroundColor:"var(--card)",borderColor:"var(--border)",color:"var(--text)"}}/><Legend verticalAlign="top" align="right" wrapperStyle={{color:"var(--text)"}}/><Line type="monotone" dataKey="nominal" name="Nominal" stroke="#2563eb" strokeWidth={3} dot={false}/><Line type="monotone" dataKey="real" name="Real (inflation-adjusted)" stroke="#10b981" strokeWidth={3} strokeDasharray="6 6" dot={false}/><Line type="monotone" dataKey="delayedNominal" name={`Delayed start (${delayYears}y)`} stroke="#f97316" strokeWidth={3} strokeDasharray="8 4" dot={false}/><ReferenceLine x={retirementAge} stroke="#eab308" strokeWidth={3} strokeDasharray="6 3" ifOverflow="extendDomain" isFront label={{value:`Retirement ${retirementAge}`,position:"insideTop",dy:14,fill:"#eab308",fontWeight:800}}/><ReferenceLine x={lifeExpectancy} stroke={"var(--axis)"} strokeWidth={2} strokeDasharray="3 3" ifOverflow="extendDomain" isFront label={{value:`Life Exp. ${lifeExpectancy}`,position:"insideTopRight",dy:14,fill:"var(--axis)",fontWeight:600}}/></ComposedChart></ResponsiveContainer></div><div className="chips"><div className="chip">Starting Assets: {fmtAUD(initialAmount)}</div><div className="chip">Projected @ End (Nominal): {fmtAUD(base.endNom)}</div><div className="chip">Projected @ End (Real): {fmtAUD(base.endReal)}</div></div><div className="chips" style="margin-top:10px"><div className="chip" style="color:var(--danger)">Cost of Delay ({delayYears}y): {fmtAUD(costOfDelay)}</div>{base.depletedAge?<div className="chip" style="color:#ef4444">Depleted ~ Age: {base.depletedAge}</div>:<div className="chip"><span style="color:var(--success);font-weight:800">Funds last beyond age {lifeExpectancy}</span></div>}<div className="chip">Sustainable spend @ retirement (today $): <strong>{fmtAUD(Math.max(0, Math.round(base.sustainableRealSpend)))}</strong></div></div></section></div><footer className="small" style="text-align:center;margin-top:16px">© <span id="yr"></span> Compound Interest Pro</footer></div>);}
-    const root = ReactDOM.createRoot(document.getElementById("root"));root.render(<App />);document.getElementById("yr").textContent=new Date().getFullYear();
+    const { useState, useMemo, useEffect, useRef } = React;
+    const { ResponsiveContainer, ComposedChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend, ReferenceLine } = Recharts;
+
+    // ---------- Helpers ----------
+    const clamp = (v, min, max) => Math.min(Math.max(Number(v) || 0, min), max);
+    const nz = (n, fb = 0) => (Number.isFinite(n) ? n : fb);
+    const fmtAUD = (n) => "A$" + nz(n, 0).toLocaleString("en-AU", { maximumFractionDigits: 0, minimumFractionDigits: 0 });
+    const parseMoney = (s) => { const t = String(s||"").replace(/[^0-9]/g,""); return t ? Number(t) : 0; };
+    const fmtYAxis = (v) => {
+      const n = Math.round(Number(v) || 0);
+      if (Math.abs(n) >= 1_000_000) return (n/1_000_000).toFixed(1) + "m";
+      if (Math.abs(n) >= 1_000) return Math.round(n/1_000) + "k";
+      return String(n);
+    };
+
+    // ---------- Inputs ----------
+    function MoneyInput({ id, label, value, onChange }) {
+      const [text, setText] = useState((value||0).toLocaleString("en-AU"));
+      useEffect(()=> setText((value||0).toLocaleString("en-AU")), [value]);
+      const commit = () => {
+        const v = parseMoney(text);
+        onChange(v);
+        setText(v.toLocaleString("en-AU"));
+      };
+      return (
+        <div>
+          <label htmlFor={id}>{label}</label>
+          <input
+            id={id}
+            type="text"
+            inputMode="numeric"
+            value={text}
+            onChange={(e)=> setText(e.target.value)}
+            onFocus={(e)=> e.target.value = String(value||0)}
+            onBlur={commit}
+            onKeyDown={(e)=> { if(e.key === "Enter"){ commit(); e.currentTarget.blur(); } }}
+          />
+        </div>
+      );
+    }
+    function RangePair({ id, label, value, onChange, min, max, step=1, money=false }) {
+      const [text, setText] = useState(String(value));
+      useEffect(()=> setText(String(value)), [value]);
+      const commit = () => {
+        const raw = money ? parseMoney(text) : Number(text);
+        const cl = clamp(raw, min, max);
+        onChange(cl);
+        setText(String(cl));
+      };
+      return (
+        <div>
+          <label htmlFor={id}>{label}</label>
+          <div className="range-row">
+            <input id={id} type="range" min={min} max={max} step={step} value={value}
+              onChange={(e)=> onChange(clamp(Number(e.target.value), min, max))} />
+            <input
+              type={money ? "text" : "number"}
+              inputMode={money ? "numeric" : undefined}
+              value={money ? "$" + (value||0).toLocaleString("en-AU") : String(value)}
+              onFocus={(e)=> money && (e.target.value = String(value))}
+              onChange={(e)=> setText(e.target.value)}
+              onBlur={commit}
+              onKeyDown={(e)=> { if(e.key === "Enter"){ commit(); e.currentTarget.blur(); } }}
+            />
+          </div>
+        </div>
+      );
+    }
+
+    // ---------- Projection ----------
+    function simulate({
+      currentAge,
+      retirementAge,
+      lifeExpectancy,
+      initialAmount,
+      monthlyContribution,
+      preRealReturn,     // real pre-ret
+      postRealReturn,    // real post-ret
+      inflation,         // annual
+      annualSpendToday,  // real (today $) then indexed
+      delayYears,
+    }) {
+      const months = Math.max(1, Math.round((lifeExpectancy - currentAge) * 12));
+      const monthsToRet = Math.max(0, Math.round((retirementAge - currentAge) * 12));
+      const monthsDelay = Math.max(0, Math.round(delayYears * 12));
+
+      // Convert real -> nominal for compounding
+      const preNom = (1 + preRealReturn) * (1 + inflation) - 1;
+      const postNom = (1 + postRealReturn) * (1 + inflation) - 1;
+
+      const mPre  = Math.pow(1 + preNom , 1/12) - 1;
+      const mPost = Math.pow(1 + postNom, 1/12) - 1;
+      const mInfl = Math.pow(1 + inflation, 1/12) - 1;
+
+      const rows = [];
+      let bal = Math.max(0, initialAmount);
+      let depletedAge = null;
+
+      for (let m=1; m<=months; m++){
+        const age = currentAge + m/12;
+        const pre = m <= monthsToRet;
+        const rate = pre ? mPre : mPost;
+
+        const contrib = pre && m > monthsDelay ? monthlyContribution : 0;
+
+        const monthsSinceRet = Math.max(0, m - monthsToRet);
+        const spend = monthsSinceRet > 0 ? (annualSpendToday/12) * Math.pow(1+mInfl, monthsSinceRet) : 0;
+
+        bal = bal * (1 + rate) + contrib - spend;
+
+        if (bal <= 0 && !depletedAge) depletedAge = age;
+        if (bal < 0) bal = 0;
+
+        if (m % 12 === 0){
+          const deflator = Math.pow(1+mInfl, m);
+          rows.push({
+            age: Math.floor(age),
+            nominal: bal,
+            real: bal / deflator
+          });
+        }
+      }
+      if (!rows.length) rows.push({ age: Math.floor(currentAge), nominal: bal, real: bal });
+
+      return {
+        rows,
+        endNom: rows[rows.length-1].nominal,
+        endReal: rows[rows.length-1].real,
+        depletedAge: depletedAge ? Math.floor(depletedAge) : null,
+      };
+    }
+
+    function mergeByAge(baseRows, delayedRows){
+      const map = new Map();
+      baseRows.forEach(r => map.set(r.age, { ...r }));
+      delayedRows.forEach(r => {
+        const prev = map.get(r.age) || { age: r.age };
+        map.set(r.age, { ...prev, delayedNominal: r.nominal });
+      });
+      return Array.from(map.values()).sort((a,b)=>a.age-b.age);
+    }
+
+    // ---------- App ----------
+    function App(){
+      const THEME_KEY = "cip_theme";
+      const LS_KEY = "cip_state_v3";
+
+      const [dark, setDark] = useState(() => (localStorage.getItem(THEME_KEY) ?? "dark") !== "light");
+      useEffect(() => {
+        document.body.classList.toggle("light", !dark);
+        localStorage.setItem(THEME_KEY, dark ? "dark" : "light");
+      }, [dark]);
+
+      // Profile
+      const [name, setName] = useState("");
+      const [location, setLocation] = useState("");
+      const [occupation, setOccupation] = useState("");
+
+      // Controls
+      const [currentAge, setCurrentAge] = useState(40);
+      const [retirementAge, setRetirementAge] = useState(60);
+      const [lifeExpectancy, setLifeExpectancy] = useState(90);
+
+      const [initialAmount, setInitialAmount] = useState(900000);
+      const [monthlyContribution, setMonthlyContribution] = useState(3000);
+
+      const [preRealReturn, setPreRealReturn] = useState(0.08);
+      const [postRealReturn, setPostRealReturn] = useState(0.025);
+      const [inflation, setInflation] = useState(0.03);
+
+      const [annualSpendToday, setAnnualSpendToday] = useState(60000);
+      const [delayYears, setDelayYears] = useState(0);
+
+      // Load persisted
+      useEffect(() => {
+        try{
+          const raw = localStorage.getItem(LS_KEY);
+          if (!raw) return;
+          const s = JSON.parse(raw);
+          setName(s.name ?? "");
+          setLocation(s.location ?? "");
+          setOccupation(s.occupation ?? "");
+          setCurrentAge(s.currentAge ?? 40);
+          setRetirementAge(s.retirementAge ?? 60);
+          setLifeExpectancy(s.lifeExpectancy ?? 90);
+          setInitialAmount(s.initialAmount ?? 900000);
+          setMonthlyContribution(s.monthlyContribution ?? 3000);
+          setPreRealReturn(s.preRealReturn ?? 0.08);
+          setPostRealReturn(s.postRealReturn ?? 0.025);
+          setInflation(s.inflation ?? 0.03);
+          setAnnualSpendToday(s.annualSpendToday ?? 60000);
+          setDelayYears(s.delayYears ?? 0);
+        } catch {}
+      }, []);
+      // Save persisted
+      useEffect(() => {
+        const s = {
+          name, location, occupation,
+          currentAge, retirementAge, lifeExpectancy,
+          initialAmount, monthlyContribution,
+          preRealReturn, postRealReturn, inflation,
+          annualSpendToday, delayYears
+        };
+        try { localStorage.setItem(LS_KEY, JSON.stringify(s)); } catch {}
+      }, [name, location, occupation, currentAge, retirementAge, lifeExpectancy, initialAmount, monthlyContribution, preRealReturn, postRealReturn, inflation, annualSpendToday, delayYears]);
+
+      // Projections
+      const base = useMemo(() => simulate({
+        currentAge, retirementAge, lifeExpectancy,
+        initialAmount, monthlyContribution,
+        preRealReturn, postRealReturn, inflation,
+        annualSpendToday, delayYears: 0
+      }), [currentAge, retirementAge, lifeExpectancy, initialAmount, monthlyContribution, preRealReturn, postRealReturn, inflation, annualSpendToday]);
+
+      const delayed = useMemo(() => simulate({
+        currentAge, retirementAge, lifeExpectancy,
+        initialAmount, monthlyContribution,
+        preRealReturn, postRealReturn, inflation,
+        annualSpendToday, delayYears
+      }), [currentAge, retirementAge, lifeExpectancy, initialAmount, monthlyContribution, preRealReturn, postRealReturn, inflation, annualSpendToday, delayYears]);
+
+      const data = useMemo(() => mergeByAge(base.rows, delayed.rows), [base.rows, delayed.rows]);
+      const costOfDelay = Math.max(0, base.endNom - delayed.endNom);
+
+      // Retirement snapshot & sustain spend (real terms converted to today-$ at retirement)
+      const atRet = base.rows.find(r => r.age === retirementAge) || base.rows.find(r => r.age > retirementAge) || base.rows[base.rows.length-1];
+      const atRetNom = atRet?.nominal ?? base.endNom;
+      const atRetReal = atRet?.real ?? base.endReal;
+      const nYearsDraw = Math.max(1, lifeExpectancy - retirementAge);
+      const rReal = postRealReturn;
+      const sustainableRealSpend = rReal <= 0
+        ? atRetReal / nYearsDraw
+        : atRetReal * (rReal / (1 - Math.pow(1 + rReal, -nYearsDraw)));
+
+      const yearsToRet = Math.max(0, retirementAge - currentAge);
+      const annualSavings = Math.max(0, monthlyContribution * 12);
+
+      // Export
+      const reportRef = useRef(null);
+      const downloadPNG = async () => {
+        const node = reportRef.current;
+        if (!node) return;
+        const canvas = await html2canvas(node, { scale: 2, backgroundColor: "#ffffff" });
+        const link = document.createElement("a");
+        link.download = "Compound_Interest_Pro.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      };
+      const downloadPDF = async () => {
+        const node = reportRef.current;
+        if (!node) return;
+        const canvas = await html2canvas(node, { scale: 2, backgroundColor: "#ffffff" });
+        const img = canvas.toDataURL("image/png");
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF("p","mm","a4");
+        const pageW = pdf.internal.pageSize.getWidth();
+        const pageH = pdf.internal.pageSize.getHeight();
+        const margin = 8;
+        const pxPerMM = 96/25.4;
+        const imgWmm = canvas.width/pxPerMM;
+        const imgHmm = canvas.height/pxPerMM;
+        const renderW = pageW - margin*2;
+        const scale = renderW / imgWmm;
+        const renderH = imgHmm * scale;
+        let remainingH = renderH;
+        let pageIndex = 0;
+        while (remainingH > 0){
+          const offsetY = margin - pageIndex*pageH;
+          pdf.addImage(img, "PNG", margin, offsetY, renderW, renderH, undefined, "FAST");
+          remainingH -= pageH;
+          pageIndex++;
+          if (remainingH > 0) pdf.addPage();
+        }
+        pdf.save("Compound_Interest_Pro.pdf");
+      };
+
+      return (
+        <div className="container" ref={reportRef}>
+          {/* Header */}
+          <header className="header">
+            <div>
+              <h1>Compound Interest Pro – The Ultimate Target</h1>
+              <p>Nominal vs Real, spending, delayed start, retirement/life lines, local save, Night/Day, PDF export.</p>
+            </div>
+            <div className="row">
+              <button className="btn" onClick={()=> setDark(d => !d)} aria-pressed={dark} title="Night / Day">
+                {dark ? "🌙 Night" : "☀️ Day"}
+              </button>
+              <button className="btn" onClick={downloadPNG} title="Download PNG">🖼️ PNG</button>
+              <button className="btn btn-primary" onClick={downloadPDF} title="Download PDF">⬇️ PDF</button>
+            </div>
+          </header>
+
+          {/* Profile */}
+          <section className="card" aria-labelledby="prof">
+            <h2 id="prof" style={{ marginTop: 0 }}>Quick Profile</h2>
+            <div className="grid-3">
+              <div><label htmlFor="name">Name</label><input id="name" value={name} onChange={(e)=>setName(e.target.value)} placeholder="e.g., Michael Leggo" /></div>
+              <div><label htmlFor="loc">Location</label><input id="loc" value={location} onChange={(e)=>setLocation(e.target.value)} placeholder="City, Country" /></div>
+              <div><label htmlFor="occ">Occupation</label><input id="occ" value={occupation} onChange={(e)=>setOccupation(e.target.value)} placeholder="e.g., Project Manager" /></div>
+            </div>
+          </section>
+
+          {/* Controls */}
+          <section className="card" aria-labelledby="controls">
+            <h2 id="controls" style={{ marginTop: 0 }}>Controls</h2>
+            <div className="grid-2">
+              <RangePair id="ageNow" label="Current Age" value={currentAge} onChange={(v)=> setCurrentAge(clamp(v,18,retirementAge-1))} min={18} max={Math.max(19,retirementAge-1)} step={1} />
+              <RangePair id="retAge" label="Retirement Age" value={retirementAge} onChange={(v)=> setRetirementAge(clamp(v,currentAge+1,100))} min={currentAge+1} max={100} step={1} />
+              <RangePair id="lifeExp" label="Life Expectancy (age)" value={lifeExpectancy} onChange={(v)=> setLifeExpectancy(clamp(v,retirementAge+1,110))} min={retirementAge+1} max={110} step={1} />
+              <RangePair id="initial" label="Initial Amount" value={initialAmount} onChange={(v)=> setInitialAmount(clamp(v,0,5_000_000))} min={0} max={5_000_000} step={5000} money />
+              <RangePair id="monthly" label="Monthly Contribution" value={monthlyContribution} onChange={(v)=> setMonthlyContribution(clamp(v,0,25_000))} min={0} max={25_000} step={100} money />
+              <RangePair id="preReal" label="Expected Real Return (% p.a., pre-retirement)" value={+(preRealReturn*100).toFixed(1)} onChange={(v)=> setPreRealReturn(clamp(v,0,20)/100)} min={0} max={20} step={0.1} />
+              <RangePair id="postReal" label="Retirement Real Return (% p.a.)" value={+(postRealReturn*100).toFixed(1)} onChange={(v)=> setPostRealReturn(clamp(v,-5,10)/100)} min={-5} max={10} step={0.1} />
+              <RangePair id="infl" label="Inflation (% p.a.)" value={+(inflation*100).toFixed(1)} onChange={(v)=> setInflation(clamp(v,0,10)/100)} min={0} max={10} step={0.1} />
+              <RangePair id="spend" label="Annual Spend (today $)" value={annualSpendToday} onChange={(v)=> setAnnualSpendToday(clamp(v,0,500_000))} min={0} max={500_000} step={1000} money />
+              <RangePair id="delay" label="Start Delay (years)" value={delayYears} onChange={(v)=> setDelayYears(clamp(v,0,10))} min={0} max={10} step={1} />
+            </div>
+            <p className="small" style={{ marginTop: 8 }}>
+              Contributions stop at retirement; spending starts at retirement and is indexed by inflation. Real balance is inflation-adjusted.
+            </p>
+          </section>
+
+          {/* Chart */}
+          <section className="card" aria-labelledby="proj">
+            <div className="center" style={{ justifyContent: "space-between" }}>
+              <h2 id="proj" style={{ margin: 0 }}>Projection</h2>
+              <div className="legend-dots">
+                <span><span className="dot" style={{ background: "#2563eb" }}></span>Nominal</span>
+                <span><span className="dot" style={{ background: "#10b981" }}></span>Real</span>
+                <span><span className="dot" style={{ background: "#f97316" }}></span>Delayed</span>
+              </div>
+            </div>
+            <div style={{ width: "100%", height: 520 }}>
+              <ResponsiveContainer>
+                <ComposedChart data={data} margin={{ top: 60, right: 32, left: 20, bottom: 34 }}>
+                  <CartesianGrid stroke={"var(--grid)"} strokeDasharray="3 3" />
+                  <XAxis dataKey="age" tickFormatter={(t)=>`${t}`} tick={{ fill: "var(--axis)" }} />
+                  <YAxis tickFormatter={fmtYAxis} tick={{ fill: "var(--axis)" }} />
+                  <Tooltip
+                    formatter={(val,name)=>[fmtAUD(val), name]}
+                    labelFormatter={(l)=>`Age ${l}`}
+                    contentStyle={{ backgroundColor: "var(--card)", borderColor: "var(--border)", color: "var(--text)" }}
+                  />
+                  <Legend verticalAlign="top" align="right" wrapperStyle={{ color: "var(--text)" }} />
+
+                  <Line type="monotone" dataKey="nominal" name="Nominal" stroke="#2563eb" strokeWidth={3} dot={false} />
+                  <Line type="monotone" dataKey="real" name="Real (inflation-adjusted)" stroke="#10b981" strokeWidth={3} strokeDasharray="6 6" dot={false} />
+                  <Line type="monotone" dataKey="delayedNominal" name={`Delayed start (${delayYears}y)`} stroke="#f97316" strokeWidth={3} strokeDasharray="8 4" dot={false} />
+
+                  {/* Retirement vertical line (gold) */}
+                  <ReferenceLine
+                    x={retirementAge}
+                    stroke="#eab308"
+                    strokeWidth={3}
+                    strokeDasharray="6 3"
+                    ifOverflow="extendDomain"
+                    isFront
+                    label={{ value: `Retirement ${retirementAge}`, position: "insideTop", dy: 14, fill: "#eab308", fontWeight: 800 }}
+                  />
+                  {/* Life expectancy marker */}
+                  <ReferenceLine
+                    x={lifeExpectancy}
+                    stroke={"var(--axis)"}
+                    strokeWidth={2}
+                    strokeDasharray="3 3"
+                    ifOverflow="extendDomain"
+                    isFront
+                    label={{ value: `Life Exp. ${lifeExpectancy}`, position: "insideTopRight", dy: 14, fill: "var(--axis)", fontWeight: 600 }}
+                  />
+                </ComposedChart>
+              </ResponsiveContainer>
+            </div>
+
+            <div className="chips">
+              <div className="chip">Starting Assets: {fmtAUD(initialAmount)}</div>
+              <div className="chip">Projected @ End (Nominal): {fmtAUD(base.endNom)}</div>
+              <div className="chip">Projected @ End (Real): {fmtAUD(base.endReal)}</div>
+            </div>
+            <div className="chips" style={{ marginTop: 10 }}>
+              <div className="chip" style={{ color: "var(--danger)" }}>Cost of Delay ({delayYears}y): {fmtAUD(costOfDelay)}</div>
+              {base.depletedAge
+                ? <div className="chip" style={{ color: "#ef4444" }}>Depleted ~ Age: {base.depletedAge}</div>
+                : <div className="chip"><span style={{ color: "var(--success)", fontWeight: 800 }}>Funds last beyond age {lifeExpectancy}</span></div>}
+              <div className="chip">Sustainable spend @ retirement (today $): <strong>{fmtAUD(Math.max(0, Math.round(sustainableRealSpend)))}</strong></div>
+            </div>
+          </section>
+
+          {/* Summary */}
+          <section className="card" aria-labelledby="sum">
+            <h2 id="sum" style={{ marginTop: 0 }}>Summary — Key Insights</h2>
+            <ul style={{ margin: 0, paddingLeft: 18, lineHeight: 1.6 }}>
+              <li><strong>Years to retirement:</strong> {yearsToRet}</li>
+              <li><strong>Annual savings (now):</strong> {fmtAUD(annualSavings)}</li>
+              <li><strong>Planned annual spend at retirement (today $):</strong> {fmtAUD(annualSpendToday)}</li>
+              <li><strong>Projected balance at retirement:</strong> <span style={{ fontWeight: 800 }}>{fmtAUD(atRetNom)}</span> nominal (<span style={{ fontWeight: 800 }}>{fmtAUD(atRetReal)}</span> real)</li>
+              <li><strong>Projected balance at horizon (age {lifeExpectancy}):</strong> {fmtAUD(base.endNom)} nominal ({fmtAUD(base.endReal)} real)</li>
+              <li><strong>Retirement line:</strong> age {retirementAge}; <strong>Life expectancy marker:</strong> age {lifeExpectancy}</li>
+              <li><strong>Cost of delaying contributions ({delayYears}y):</strong> <span style={{ color: '#dc2626', fontWeight: 700 }}>{fmtAUD(costOfDelay)}</span></li>
+              {base.depletedAge
+                ? <li><strong>Drawdown risk:</strong> Funds may be depleted around age <span style={{ color: '#ef4444', fontWeight: 700 }}>{base.depletedAge}</span>.</li>
+                : <li><strong>Drawdown outlook:</strong> <span style={{ color: '#059669', fontWeight: 800 }}>Funds are projected to last beyond age {lifeExpectancy}</span>.</li>}
+            </ul>
+          </section>
+
+          <footer className="small" style={{ textAlign: "center", marginTop: 16 }}>
+            © <span id="yr"></span> Compound Interest Pro
+          </footer>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<App />);
+    document.getElementById("yr").textContent = new Date().getFullYear();
   </script>
 </body>
 </html>
